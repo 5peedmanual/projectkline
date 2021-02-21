@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+#include "i2c.h"
 /*
  * 
  */
@@ -17,7 +19,8 @@ void init_lcd16(void)
      * RS 1 data
      */
     /* DL = 1, N = 1, F = 0*/
-    write_i2c(0x38); /* Function set, 8 bit, 2 lines, 5×7 */
-    write_i2c(0x0F); /* Display ON, Cursor On, Cursor Blinking */
-    write_i2c(0x06);
+    write_i2c(SLAVE_ADDR, 0x38); /* Function set, 8 bit, 2 lines, 5×7 */
+    write_i2c(SLAVE_ADDR, 0x0F); /* Display ON, Cursor On, Cursor Blinking */
+    //write_i2c(0x06);
+    write_i2c(SLAVE_ADDR, 0x48);
 }

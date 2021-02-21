@@ -20,7 +20,7 @@
  * _PIC12 */
 #ifndef _PIC12
 
-void interrupt isr(void)
+void __interrupt() isr(void)
 {
     /* This code stub shows general interrupt handling.  Note that these
     conditional statements are not handled within 3 seperate if blocks.

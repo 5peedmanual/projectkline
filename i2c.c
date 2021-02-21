@@ -8,19 +8,22 @@
 #include <xc.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <pic.h>
 
 
-#include  "pic16f877.h"
+#include  "pic16f877a.h"
 
 
-#define SLAVE_ADDR 0x20
 
 static void enable_serial_port(void);
 static void configure_clock(void);
-static void configure_control_reg(void);
+static void start_i2c();
+static void stop_i2c(); 
 static void wait_mssp(void);
 static void check_ack_bit(void);
+static void error_i2c();
+
 
 
 
@@ -44,9 +47,7 @@ int init_i2c(void)
     SSPSTATbits.UA  = 0; /* update address */
     
     enable_serial_port();
-    enable_mssp();
     configure_clock();
-    configure_control_reg();
 }
 
 
@@ -54,14 +55,11 @@ int init_i2c(void)
 
 static void enable_serial_port(void)
 {
-    /* From control register: 
-    * SSPEN: Synchronous Serial Port Enable bit
-    * 1 = Enables the serial port and configures 
-     *      the SDA and SCL pins as serial port pins
-    */
-    SSPCONbits.SSPEN = 1;
-    TRISBbits.TRISB1 = 1;
-    TRISBbits.TRISB4 = 1;
+    /* Enables the serial port and configures the SDA 
+     * and SCL pins as the serial port pins
+     */
+    SSPCONbits.SSPEN = 1; 
+    TRISC = 0x0C;
 }
 
 
@@ -83,21 +81,14 @@ static void configure_clock(void)
      */
     SSPCONbits.CKP = 0;
     SSPADD = 9;
-}
-
-
-static void configure_control_reg(void)
-{
-    SSPCONbits.WCOL = 0;    /* Write Collision */
-    SSPCONbits.SSPOV = 0;   /* Receive Overflow Indicator bit */
-    // SSPCONbits.CKP = 0;     /* SCK Release Control bit (not used in MM */
-    
     /* I2C Master mode, clock = FOSC/(4 * (SSPADD + 1)) */
     SSPCONbits.SSPM3 = 1;
     SSPCONbits.SSPM2 = 0;
     SSPCONbits.SSPM1 = 0;
     SSPCONbits.SSPM0 = 0;
 }
+
+
 
 /* bitbanging i2c                                                       */
 /* start bit:
@@ -113,14 +104,17 @@ void write_i2c(uint8_t addr, uint8_t data)
     /* send start condition and wait for it to complete */
     start_i2c();
     SSPBUF = addr;
+    wait_mssp();
     check_ack_bit();
     wait_mssp();
     SSPBUF = data;
+    wait_mssp();
+    check_ack_bit();
     stop_i2c();
 }
 
 
-void start_i2c() 
+static void start_i2c() 
 {
     /* Generate start condition */
     SSPCON2bits.SEN = 1;
@@ -129,7 +123,7 @@ void start_i2c()
 }
 
 
-void stop_i2c() 
+static void stop_i2c() 
 {
     /* Generate start condition */
     SSPCON2bits.PEN = 1;
@@ -150,8 +144,9 @@ static void wait_mssp(void)
     /* the  SSPSR  register  value  is  not  loaded into  the  SSPBUF,  
      * but  bit  SSPIF  (PIR1<3>)  is  set. */
     
-    while ((PIR1 & 0x08) == 0); /* bit3 & 1 */
-    PIR1 = 0; /* clear it */
+    //while ((PIR1 & 0x08) == 0); /* bit3 & 1 */
+    while (PIR1bits.SSPIF);
+    PIR1bits.SSPIF = 0; /* clear it */
 }
 
 
@@ -161,7 +156,14 @@ static void check_ack_bit(void)
      * 1 = Acknowledge was not received from slave 
      * 0 = Acknowledge was received from slave
      */
-    if (SSPCON2bits.ACKSTAT)
-        i2c_error();
+    if (SSPCON2bits.ACKSTAT) 
+        error_i2c();
 }
 
+
+static void error_i2c(void) 
+{
+    stop_i2c();
+    PORTB = 0xFF;
+    while(1);
+}

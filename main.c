@@ -11,9 +11,12 @@
 #include <stdint.h>        /* For uint8_t definition */
 #include <stdbool.h>       /* For true/false definition */
 
+
 #include "system.h"        /* System funct/params, like osc/peripheral config */
 #include "user.h"          /* User funct/params, such as InitApp */
-#include "pic16f88.h"
+#include "i2c.h"
+#include "lcd16.h"
+#include "pic16f877a.h"
 
 
 /******************************************************************************/
@@ -28,14 +31,16 @@
 void main(void)
 {
     /* Configure the oscillator for the device */
-    ConfigureOscillator();
+    configure_osc();
 
     /* Initialize I/O and Peripherals for application */
-    InitApp();
-
+    init_app();
+    init_i2c();
+    init_lcd16();
 
     while(1)
     {
+        
         /* TODO <INSERT USER APPLICATION CODE HERE> */
     }
 

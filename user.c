@@ -11,18 +11,23 @@
 #include <stdint.h>         /* For uint8_t definition */
 #include <stdbool.h>        /* For true/false definition */
 
+
 #include "user.h"
+#include "pic16f877a.h"
 
 /******************************************************************************/
 /* User Functions                                                             */
 /******************************************************************************/
 
-/* <Initialize variables in user.h and insert code for user algorithms.> */
+static void init_ports();
+static void init_peripherals();
+static void init_interrupts();
 
-void InitApp(void)
+
+void init_app(void)
 {
     /* TODO Initialize User Ports/Peripherals/Project here */
-
+    init_ports();
     /* Setup analog functionality and port direction */
 
     /* Initialize peripherals */
@@ -30,3 +35,8 @@ void InitApp(void)
     /* Enable interrupts */
 }
 
+static void init_ports()
+{
+    /* Port B is output */ 
+    TRISB = 0; 
+}
