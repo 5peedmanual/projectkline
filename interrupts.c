@@ -10,6 +10,7 @@
 
 #include <stdint.h>         /* For uint8_t definition */
 #include <stdbool.h>        /* For true/false definition */
+#include "debug_leds.h"
 
 /******************************************************************************/
 /* Interrupt Routines                                                         */
@@ -32,18 +33,11 @@ void __interrupt() isr(void)
     /* TODO Add interrupt routine code here. */
 
     /* Determine which flag generated the interrupt */
-    if(<Interrupt Flag 1>)
-    {
-        <Interrupt Flag 1=0>; /* Clear Interrupt Flag 1 */
+    if (PIR1bits.SSPIF) {
+        switch_prtd_led(2,TURN_ON);
+        PIR1bits.SSPIF = 0;
     }
-    else if (<Interrupt Flag 2>)
-    {
-        <Interrupt Flag 2=0>; /* Clear Interrupt Flag 2 */
-    }
-    else
-    {
-        /* Unhandled interrupts */
-    }
+    
 
 #endif
 
