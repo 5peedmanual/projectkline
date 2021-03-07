@@ -8,9 +8,13 @@
 #ifndef I2C_H
 #define	I2C_H
 #include <stdint.h>
-#define SLAVE_ADDR 0x40
-int init_i2c(void);
-void write_i2c(uint8_t addr, uint8_t data);
+
+
+
+void init_i2c(void);
+void start_i2c(void);
+void stop_i2c(void);
+void write_i2c(uint8_t data);
 
 
 #endif	/* I2C_H */
