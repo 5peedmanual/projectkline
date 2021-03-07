@@ -12,19 +12,26 @@
 #include <pic.h>
 
 
-#include  "pic16f877a.h"
+
+#include "cristal.h"
+#include "debug_leds.h"
+#include "i2c_utils.h"
+#include "pcf84naoseiquantos.h"
+#include "pic16f877a.h"
 
 
 
-static void enable_serial_port(void);
+
+static void set_slew_rate_i2c(void);
+static void enable_serial_port_i2c(void);
 static void configure_clock(void);
-static void start_i2c();
-static void stop_i2c(); 
-static void wait_mssp(void);
-static void check_ack_bit(void);
-static void error_i2c();
+static void just_write_i2c(uint8_t data);
+static void start_i2c(void);
+static void stop_i2c(void); 
 
 
+#define I2C_BAUD 100000
+#define LCD_BACKLIGHT         0x08
 
 
 /* when microcontrollers are set as inputs their pin states are set to high 
@@ -34,40 +41,40 @@ static void error_i2c();
  * drive it high.
  */
 
-
-
-
 /*
  * Initializes Control/Status Registers, and set SDA & SCL lines.
  */
-int init_i2c(void)
+void init_i2c(void)
 {
-    /* Status register */
-    SSPSTATbits.SMP = 0; /* slew rate? */
-    SSPSTATbits.UA  = 0; /* update address */
-    
-    enable_serial_port();
-    configure_clock();
+
+    set_slew_rate_i2c();
+    enable_serial_port_i2c();
+    configure_clock();  
 }
 
 
+static void set_slew_rate_i2c(void)
+{
+    /* Slew rate control disabled for standard speed mode (100 kHz and 1 MHz) */
+    SSPSTATbits.SMP = 1;
+}
 
 
-static void enable_serial_port(void)
+static void enable_serial_port_i2c(void)
 {
     /* Enables the serial port and configures the SDA 
      * and SCL pins as the serial port pins
      */
     SSPCONbits.SSPEN = 1; 
-    TRISC = 0x0C;
+    
+    /* SDA and SCL as inputs */
+    TRISCbits.TRISC3 = 1;
+    TRISCbits.TRISC4 = 1;
 }
 
 
 static void configure_clock(void)
 {
-    /* 
-     * CKP is also in SSPCON but is not used for master mode I2C.
-     */
     /* CKOP: Clock Polarity Select bit
      * 
      * Baud Rate Calculation:
@@ -79,13 +86,42 @@ static void configure_clock(void)
      * 100 kHz or 100 kbps
      * 4 MHz / (9 + 1)
      */
-    SSPCONbits.CKP = 0;
-    SSPADD = 9;
+    
+    SSPADD = ((_XTAL_FREQ/4)/I2C_BAUD) - 1;
+
     /* I2C Master mode, clock = FOSC/(4 * (SSPADD + 1)) */
     SSPCONbits.SSPM3 = 1;
     SSPCONbits.SSPM2 = 0;
     SSPCONbits.SSPM1 = 0;
     SSPCONbits.SSPM0 = 0;
+}
+
+
+void start_i2c() 
+{    
+    master_w8();
+    /* Generate start condition */
+    SEN = 1;
+    wait_mssp();
+    //while(!SSPCON2bits.SEN);
+}
+
+
+void stop_i2c() 
+{
+    master_w8();
+    /* Generate stop condition */
+    SSPCON2bits.PEN = 1;
+    wait_mssp();
+}
+
+
+void funcao_misterio_i2c(uint8_t data) 
+{
+    start_i2c();
+    just_write_i2c(SLAVE_ADDR_W);
+    just_write_i2c(data);
+    stop_i2c();
 }
 
 
@@ -99,71 +135,23 @@ static void configure_clock(void)
  * send data
  * read acknowledge bit
  */
-void write_i2c(uint8_t addr, uint8_t data)
+void old_write_i2c(uint8_t addr, uint8_t data)
 {
     /* send start condition and wait for it to complete */
     start_i2c();
     SSPBUF = addr;
-    wait_mssp();
-    check_ack_bit();
+    check_ack_bit_i2c();
     wait_mssp();
     SSPBUF = data;
+    check_ack_bit_i2c();
     wait_mssp();
-    check_ack_bit();
     stop_i2c();
 }
 
 
-static void start_i2c() 
+void write_i2c(uint8_t data)
 {
-    /* Generate start condition */
-    SSPCON2bits.SEN = 1;
+    SSPBUF = data;
+    check_ack_bit_i2c();
     wait_mssp();
-
-}
-
-
-static void stop_i2c() 
-{
-    /* Generate start condition */
-    SSPCON2bits.PEN = 1;
-    wait_mssp();
-
-}
-
-/* Master Synchronous Serial Port
- * The following events will cause the SSP Interrupt Flag bit, SSPIF, 
- * to be set (SSP Interrupt if enabled):
- *  Start condition
- *  Stop condition
- *  Data transfer byte transmitted/received
- */
-static void wait_mssp(void)
-{
-    /* SSP Interrupt Flag bit (interrupt if enabled) */
-    /* the  SSPSR  register  value  is  not  loaded into  the  SSPBUF,  
-     * but  bit  SSPIF  (PIR1<3>)  is  set. */
-    
-    //while ((PIR1 & 0x08) == 0); /* bit3 & 1 */
-    while (PIR1bits.SSPIF);
-    PIR1bits.SSPIF = 0; /* clear it */
-}
-
-
-static void check_ack_bit(void)
-{
-    /* ACKSTAT: Acknowledge Status bit (Master Transmit mode only)
-     * 1 = Acknowledge was not received from slave 
-     * 0 = Acknowledge was received from slave
-     */
-    if (SSPCON2bits.ACKSTAT) 
-        error_i2c();
-}
-
-
-static void error_i2c(void) 
-{
-    stop_i2c();
-    PORTB = 0xFF;
-    while(1);
 }
