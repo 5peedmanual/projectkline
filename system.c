@@ -1,38 +1,51 @@
-/******************************************************************************/
-/*Files to Include                                                            */
-/******************************************************************************/
-
-#if defined(__XC)
-    #include <xc.h>         /* XC8 General Include File */
-#elif defined(HI_TECH_C)
-    #include <htc.h>        /* HiTech General Include File */
-#endif
-
-#include <stdint.h>        /* For uint8_t definition */
-#include <stdbool.h>
-#include <pic16f877a.h>       /* For true/false definition */
+#include <pic16f877a.h>         /* Pic definitions              */
+#include <stdbool.h>            /* Bools, true of false         */
+#include <stdint.h>             /* For uint8_t definition       */
+#include <stdlib.h>
+#include <xc.h>                 /* XC8 General Include File     */
 
 #include "system.h"
 
-/* Refer to the device datasheet for information about available
-oscillator configurations. */
+
+
+/******************************************************************************/
+/* Interrupts                                                                 */
+/******************************************************************************/
 void configure_interrupts(void)
 {
-    /* Enables TMR1 Overflow Interrupt 
-     * and Synchronous Serial Port Interrupt Enable bit
-     */
-    PIE1 = 0x09; 
+    /* Enables TMR1 Overflow Interrupt                                        */
+    /* and Synchronous Serial Port Interrupt Enable bit                       */
+    /*                                                                        */
+    //PIE1        = 0x09;
+    PIE1bits.TMR1IE = 1;
+    
+    
+    /* Enable Timer1 interrupt                                                */
+    //PIE1bits.TMR1IE
+    PIE1bits.TMR1IE = 1;
+    //TMR1IE_bit  = 1;
+    
+    /* Enable TX interrupt                                                    */
+    PIE1bits.TXIE = 1;
+
+    
     //PIE1 = 0x00;
     //PIR1
     //PIE2
-    //PIR2
-
-           
+    //PIR2         
 }
 
 
-static void enable_global_int(void)
+void enable_gi(void)
 {
-    INTCONbits.GIE = 1;
+    /* GIE: Global Interrupt Enable bit                                       */
+    INTCONbits.GIE  = 1;
+    
+    /* PIE: Peripheral Interrupt Enable bit                                   */
     INTCONbits.PEIE = 1;
 }
+
+/* ************************************************************************** */
+
+
+

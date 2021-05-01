@@ -1,70 +1,20 @@
-#include <xc.h>
-#include <stdio.h>
+#include <pic16f877a.h>         /* Pic definitions              */
+#include <stdbool.h>            /* Bools, true of false         */
+#include <stdint.h>             /* For uint8_t definition       */
 #include <stdlib.h>
-#include <stdint.h>
+#include <xc.h>                 /* XC8 General Include File     */
 
 
 
-typedef struct {
-    uint8_t format_byte;
-    uint8_t target_byte;
-    uint8_t source_byte;
-    uint8_t length_byte;
-} Header;
-
-
-typedef struct {
-    
-    /* 
-     * Header 
-     * -----------------------------------------------------------------------
-     *  format byte includes information about the form of the message,
-     *  target and source address bytes are optional for use with multi node 
-     *  connections, an optional separate length byte allows message lengths 
-     *  up to 255 bytes. 
-     * 
-     * 
-     * Header definition :
-     * 
-     * typedef struct { 
-     *      uint8_t format_byte;
-     *      uint8_t target_byte;
-     *      uint8_t source_byte;
-     *      uint8_t length_byte;
-     * } Header;
-     * 
-     * -----------------------------------------------------------------------
-     * 
-     */
-    Header *hdp;
-    
-    uint8_t negative_response_id;
-    uint8_t service_id;
-    char    data[255];
-    uint8_t parameter_type;
-    uint8_t checksum_byte;
-} Kline;
-
-
-struct request_kline {
-    Header.format_byte      = 0x81;
-    uint8_t service_id  = 0x81;
-    
-};
+#include "ISO.h"
+#include "kline_send.h"
+#include "kline_wait_functions.h"
+#include "kline_struct.h"
 
 
 
-
-
-void init_struct(void)
-{
-    Header  header_s    = { 0 };
-    Kline   kline_s     = { 0 };
-    kline_s.hdp = &header_s;
-    
-    kline_s.hdp->format_byte = 1;
-}
-
+static uint8_t checksum_kline(const uint8_t [], const uint8_t);
+static void fast_initialisation(Kline *);
 
 
 
@@ -79,39 +29,26 @@ void init_kline(void)
 }
 
 
-static void checksum_kline(uint8_t)
+static void fast_initialisation(Kline *klinep) 
 {
     
-}
-
-
-static void fast_initialisation(struct kline *klp) 
-{
-    
-    uint8_t t_idle              = ISO_T_IDLE;
-    uint8_t t_wake_up           = 50;
-    uint8_t t_init_kline_low    = 25;
-    
-    
+    //send_kline_wake_up();
     /* 
      * The first message of a fast initialisation always uses a header
      *  with target and source address and without additional length byte
      */
-    send_start_request(klp);
+    //send_start_request(klinep);             
     
     /* 25...50 ms*, 0..1000ms** */
-    wait_p2();
+    //wait_p2(klinep);
     
-    read_start_response(klp);
+    //read_start_response(klinep);
     
     /* 55...5000ms*, 0...5000 ms** */
-    wait_p3();
+    //wait_p3();
 }
 
 
-static void send_start_request(struct kline *klp)
-{
-    klp->hb->format_byte    = 0;
-    klp->service_id         = 0;
-    klp->checksum_byte      = checksum_kline(klp);
-}
+
+
+

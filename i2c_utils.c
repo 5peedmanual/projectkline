@@ -1,5 +1,8 @@
-#include <stdint.h>         /* For uint8_t definition */
-#include <stdbool.h>        /* For true/false definition */
+#include <pic16f877a.h>         /* Pic definitions              */
+#include <stdbool.h>            /* Bools, true of false         */
+#include <stdint.h>             /* For uint8_t definition       */
+#include <stdlib.h>
+#include <xc.h>                 /* XC8 General Include File     */
 
 
 #include "cristal.h"
@@ -45,7 +48,7 @@ void wait_mssp(void)
  * address (including a general call)or when the slave has 
  * properly received its data 
  */
-void check_ack_bit_i2c(void)
+inline void check_ack_bit_i2c(void)
 {
     /* ACKSTAT: Acknowledge Status bit (Master Transmit mode only)
      * 1 = Acknowledge was not received from slave 
@@ -60,13 +63,13 @@ void check_ack_bit_i2c(void)
  *   BF bit is set when the CPU writes to SSPBUF and is 
  * cleared when all eight bits are shifted out. 
  */
-void check_bf_i2c(void)
+inline void check_bf_i2c(void)
 {
     while (!SSPSTATbits.BF);
 }
 
 
-void error_i2c(void) 
+inline void error_i2c(void) 
 {
 
     while (1) {

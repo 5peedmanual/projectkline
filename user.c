@@ -1,55 +1,70 @@
-#if defined(__XC)
-    #include <xc.h>         /* XC8 General Include File */
-#elif defined(HI_TECH_C)
-    #include <htc.h>        /* HiTech General Include File */
-#endif
-
-#include <stdint.h>         /* For uint8_t definition */
-#include <stdbool.h>        /* For true/false definition */
+#include <pic16f877a.h>         /* Pic definitions              */
+#include <stdbool.h>            /* Bools, true of false         */
+#include <stdint.h>             /* For uint8_t definition       */
+#include <stdlib.h>
+#include <xc.h>                 /* XC8 General Include File     */
 
 #include "i2c.h"
+#include "uart.h"
 #include "user.h"
-#include "pic16f877a.h"
+#include "portas.h"
 #include "simon_hd44780_lcd.h"
+#include "system.h"
+#include "timers.h"
+#include "debug_leds.h"
+
+
+
 
 /******************************************************************************/
-/* User Functions                                                             */
+/* Application                                                                */
 /******************************************************************************/
-
-static void init_ports(void);
-static void init_peripherals(void);
-static void init_interrupts(void);
-
-
-void init_app(void)
+inline void init_app(void) 
 {
-    /* TODO Initialize User Ports/Peripherals/Project here */
+    /**************************************************************************/
+    /* Initialize microcontroller ports                                       */
+    /* [portas.c] for more                                                    */
+    /**************************************************************************/
     init_ports();
+    /**************************************************************************/
+
     
-    /* Initializing protocols*/
+    /**************************************************************************/
+    /* Initialize peripherals                                                 */
+    /**************************************************************************/
+    /* Initialize i2c protocol                                                */
     init_i2c();
-    
-    /* Setup analog functionality and port direction */
-
-    /* Initialize peripherals */
+    /* Initialize uart protocol                                               */
+    init_uart();
+    /* Initialize the hd44780 lcd                                             */
     lcd_init();
-    
+    /**************************************************************************/
 
-    /* Enable interrupts:
-     * PIE1 and TMR1
-     */
-    //void configure_interrupts(void);
+    switch_prtd_led(1,1);
     
+    /**************************************************************************/
+    /* Interrupts                                                             */
+    /* [system.c] for more                                                    */
+    /**************************************************************************/
+    /*                                                                        */
+    configure_interrupts();
+    switch_prtd_led(2,1);
+    /*                                                                        */
+    /* Global interrupts                                                      */
+    enable_gi();
+    switch_prtd_led(3,1);
+    /**************************************************************************/
+    /*                                                                        */
+    /*                                                                        */   
+    /* We'll be using timer one to count delays in kline                      */
+    configure_timer1();
+    switch_prtd_led(4,1);
+    /**************************************************************************/
+    return;
 }
 
-static void init_ports()
-{
-    /* Port B is output */ 
-    TRISB = 0;
-    TRISD = 0;
-    
-    PORTB = 0x00;
-    PORTD = 0x00;
-}
+
+
+
 
 

@@ -7,6 +7,7 @@
 #elif defined(HI_TECH_C)
     #include <htc.h>        /* HiTech General Include File */
 #endif
+#include <pic16f877a.h>         /* Pic definitions              */
 
 #include <stdint.h>         /* For uint8_t definition */
 #include <stdbool.h>        /* For true/false definition */
@@ -28,18 +29,23 @@ void __interrupt() isr(void)
     Do not use a seperate if block for each interrupt flag to avoid run
     time errors. */
 
-#if 0
-    
+//#define I2C_INT 1
+#ifdef I2C_INT
     /* TODO Add interrupt routine code here. */
 
     /* Determine which flag generated the interrupt */
     if (PIR1bits.SSPIF) {
-        switch_prtd_led(2,TURN_ON);
         PIR1bits.SSPIF = 0;
     }
-    
-
 #endif
+    PIE1 = 0;
+    
+    if (SSPIF == 1) {
+        SSPIF = 0;
+    }
+    if (TMR1IF==1) {
+        TMR1IF = 0;            // clear timer1 interupt flag TMR1IF
+    }
 
 }
 #endif

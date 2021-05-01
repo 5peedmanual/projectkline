@@ -142,17 +142,11 @@ The AC contents are then output to DB0 to DB6 when RS = 0 and R/W = 1
 
 */
 
-#if defined(__XC)
-    #include <xc.h>         /* XC8 General Include File */
-#elif defined(HI_TECH_C)
-    #include <htc.h>        /* HiTech General Include File */
-#elif defined(__18CXX)
-    #include <p18cxxx.h>    /* C18 General Include File */
-#endif
-
-#if defined(__XC) || defined(HI_TECH_C)
-    #include <stdint.h>         /* For uint8_t definition */
-#endif
+#include <pic16f877a.h>         /* Pic definitions              */
+#include <stdbool.h>            /* Bools, true of false         */
+#include <stdint.h>             /* For uint8_t definition       */
+#include <stdlib.h>
+#include <xc.h>                 /* XC8 General Include File     */
 
 #include "cristal.h"
 #include "i2c.h"
@@ -160,7 +154,7 @@ The AC contents are then output to DB0 to DB6 when RS = 0 and R/W = 1
 #include "simon_hd44780_lcd.h"
 #include "system.h"
 
-void lcd_send_instruction();
+void lcd_send_instruction(void);
 
 struct {
        unsigned int instruction;
@@ -194,10 +188,11 @@ void lcd_backlight_off(void)
 }
 
 
-void lcd_backlight_on(void)
+inline void lcd_backlight_on(void)
 {
         LCDSTRUCT.backlight = 1;
         lcd_display_on();
+        return;
 }
 
 
@@ -208,7 +203,7 @@ void lcd_backlight_toggle(void)
 }
 
 
-void lcd_clear_display()
+inline void lcd_clear_display()
 {
         LCDSTRUCT.instruction = CLEARDISPLAY;
         lcd_send_instruction();
@@ -329,7 +324,7 @@ void lcd_display_off(void)
 }
 
 
-void lcd_display_on(void)
+inline void lcd_display_on(void)
 {
         uint8_t c = 0x00;
         c |= LCDSTRUCT.cursorOn;
@@ -339,6 +334,7 @@ void lcd_display_on(void)
         
         LCDSTRUCT.instruction = c;
         lcd_send_instruction();
+        return;
 }
 
 
@@ -365,6 +361,7 @@ void lcd_display_shift_right(int n)
         for (int i = 0; i < n; i++) {
                 lcd_send_instruction();
         }    
+        
 }
 
 
@@ -372,7 +369,7 @@ void lcd_display_shift_right(int n)
  * refer to figure 24 in datasheet for instructions on 4bit initialisation
  * DL = 0 : 4 bits
  */
-static void lcd_function_set_4bit()
+static inline void lcd_function_set_4bit()
 {        
         lcd_wait();
         
@@ -388,6 +385,7 @@ static void lcd_function_set_4bit()
         stop_i2c();
         
         lcd_wait();
+        return;
    
 }   
  
@@ -411,7 +409,7 @@ void lcd_print(const char *mystring)
  * In 4-bit operation, the high nibble is sent first, 
  * then the low nibble with corresponding LCDSTRUCT bits
  */
-void lcd_send_instruction() 
+void lcd_send_instruction(void) 
 {        
         lcd_wait();        
         start_i2c();
@@ -433,6 +431,7 @@ void lcd_send_instruction()
                 
         stop_i2c();
         lcd_wait();
+        return;
 }    
 
 
@@ -450,25 +449,28 @@ void lcd_set_lines(int lines)
                 LCDSTRUCT.instruction |= 0x08; 
         }         
         lcd_send_instruction();
+        return;
 } 
 
 
-void lcd_wait()
+inline void lcd_wait(void)
 {    
         unsigned char i,j;
         for(i=0; i<50; i++) // A simple for loop for delay
                 for(j=0; j<255; j++);
-        __delay_ms(5);        
+        __delay_ms(5); 
+        return;
                 
 }
 
 
-void lcd_init() 
+inline void lcd_init(void) 
 {
         lcd_function_set_4bit();
         lcd_set_lines(2);    
         lcd_display_on();
         lcd_clear_display();
         lcd_backlight_on();
+        return;
 }    
 
