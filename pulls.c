@@ -13,7 +13,7 @@ extern volatile uint8_t theVariableThatTheIsrChanges;
 
 void pull_low_kline(uint8_t time)
 {
-    PORTCbits.RC6 = 1;
+    PORTCbits.RC6 = 0;
     delay(time);
     while (!theVariableThatTheIsrChanges);
 

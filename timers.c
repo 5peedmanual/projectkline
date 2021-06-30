@@ -60,12 +60,13 @@ static uint16_t calc_reg_value(uint16_t ms)
 {
     /* */
     uint16_t    fosc        = 4; /* 4 million hz                              */
-    uint16_t    prescaler   = 8; /* 1:8 pre-scaler                            */
-    uint16_t    tcount_freq = prescaler/(fosc/4);
-    float       tcount      = ((float) ms / (float) tcount_freq) * 1000;
+    uint16_t    prescaler   = 4; /* 1:8 pre-scaler                            */
+    //uint16_t    tcount_freq = prescaler/(fosc); // tick
+    //float       tcount      = ((float) ms / (float) tcount_freq) * 1000; // tick counter frequency
     
     /* 65536 - 16 byte max value                                              */
-    uint8_t     reg         = 65536 - (uint16_t) tcount;
+    uint16_t    reg         = 65536 - ((ms * fosc)/(prescaler * 4));
+    //uint16_t     reg         = 65536 - (uint16_t) tcount;
     
     return reg;
 }

@@ -15,26 +15,39 @@
 #include "main.h"
 #include "uart.h"
 
+#include "timers.h"
+ 
+static void test_delay(void);
 static void blink_green_led(void);
+
 
 
 void main(void)
 {
     init_app();
-    switch_prtd_led(5,1);
-    lcd_print("Hello World");
     
+    lcd_print("Hello World");
+    test_delay();
     
     
     while (1) {
         blink_green_led();
-        write_uart(0x12);
+        //write_uart(0x12);
         pull_low_kline(50);
     
     }
 
 }
 
+static void test_delay(void)
+{
+    for (int i = 0; i < 255;i++) {
+    switch_prtd_led(0,1);
+    delay(100);
+    switch_prtd_led(0,0);
+    delay(100);
+    }
+}
 
 static void blink_green_led(void)
 {
