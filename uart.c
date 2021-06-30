@@ -19,7 +19,7 @@ static void enable_async_port_uart(void);
 	// ~10400 baud --> UBRR = 47
 	// 8-bit character size
 	// No parity bit, 1 stop bit
-void init_uart(void)
+inline void init_uart(void)
 {
     configure_baud_uart();
     
@@ -51,6 +51,11 @@ static void enable_async_port_uart(void)
     
 }
 
+void disable_async_port_uart(void) 
+{
+    RCSTAbits.SPEN = 0;
+    TXSTAbits.TXEN = 0;
+}
 
 void write_uart(uint8_t data)
 {

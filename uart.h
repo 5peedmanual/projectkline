@@ -8,7 +8,8 @@
 #ifndef UART_H
 #define	UART_H
 
-void init_uart(void);
+inline void init_uart(void);
+void disable_async_port_uart(void);
 void write_uart(uint8_t data);
 uint8_t read_uart(void);
 
