@@ -17,16 +17,16 @@ void configure_interrupts(void)
     /* and Synchronous Serial Port Interrupt Enable bit                       */
     /*                                                                        */
     //PIE1        = 0x09;
-    PIE1bits.TMR1IE = 1;
+    //PIE1bits.TMR1IE = 1;
     
     
     /* Enable Timer1 interrupt                                                */
     //PIE1bits.TMR1IE
-    PIE1bits.TMR1IE = 1;
+    PIE1bits.TMR1IE = 1; /* hard debug time over this :c */
     //TMR1IE_bit  = 1;
     
     /* Enable TX interrupt                                                    */
-    PIE1bits.TXIE = 1;
+    //PIE1bits.TXIE = 1;
 
     
     //PIE1 = 0x00;

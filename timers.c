@@ -3,7 +3,8 @@
 #include <stdint.h>             /* For uint8_t definition       */
 #include <stdlib.h>
 #include <xc.h>                 /* XC8 General Include File     */
-
+#include "debug_leds.h"
+#include "cristal.h"
 #define PRESCALER 8
 
 /* ************************************************************************** */
@@ -50,7 +51,7 @@ static uint16_t calc_reg_value(uint16_t ms);
 void delay(uint16_t ms)
 {
     uint16_t register_val = calc_reg_value(ms);
-    
+
     start_timer(register_val);
 }
 
@@ -71,10 +72,8 @@ static uint16_t calc_reg_value(uint16_t ms)
 
 static void start_timer(uint16_t register_val)
 {
-    
-
     /* fill timer one register value                                          */
-    TMR1 = (uint16_t) register_val;
+    TMR1 = register_val;
 
     /* TMR1ON: Timer1 On bit                                                  */
     TMR1ON = 1; /* turn timer on                                              */

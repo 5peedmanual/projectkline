@@ -5,6 +5,9 @@
 #include <xc.h>                 /* XC8 General Include File     */
 
 
+#include "pulls.h"
+
+
 static void init_aux_ports(void);
 static void init_i2c_port(void);
 static void init_uart_port(void);
@@ -47,6 +50,7 @@ static void init_uart_port(void)
 {
     /* TX as output and RX as input                                           */
     TRISCbits.TRISC6 = 0;
+    pull_up_terrain_kline(50);
     TRISCbits.TRISC7 = 1;
     return;
 }

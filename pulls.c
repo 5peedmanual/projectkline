@@ -6,13 +6,18 @@
 
 #include "pulls.h"
 #include "timers.h"
+#include "debug_leds.h"
+extern volatile uint8_t theVariableThatTheIsrChanges;
 
 
 
 void pull_low_kline(uint8_t time)
 {
-    PORTCbits.RC6 = 0;
+    PORTCbits.RC6 = 1;
     delay(time);
+    while (!theVariableThatTheIsrChanges);
+
+    
 }
 
 

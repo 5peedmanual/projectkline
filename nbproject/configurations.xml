@@ -4,21 +4,62 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <logicalFolder name="f1" displayName="kline_headers" projectFiles="true">
+        <itemPath>kline.h</itemPath>
+        <itemPath>kline_wait_functions.h</itemPath>
+        <itemPath>kline_send.h</itemPath>
+        <itemPath>pulls.h</itemPath>
+        <itemPath>kline_struct.h</itemPath>
+        <itemPath>kline_utils.h</itemPath>
+      </logicalFolder>
       <itemPath>system.h</itemPath>
       <itemPath>user.h</itemPath>
-      <itemPath>lcd16.h</itemPath>
       <itemPath>i2c.h</itemPath>
+      <itemPath>pcf84naoseiquantos.h</itemPath>
+      <itemPath>debug_leds.h</itemPath>
+      <itemPath>i2c_utils.h</itemPath>
+      <itemPath>simon_hd44780_lcd.h</itemPath>
+      <itemPath>uart.h</itemPath>
+      <itemPath>ISO.h</itemPath>
+      <itemPath>timers.h</itemPath>
+      <itemPath>cristal.h</itemPath>
+      <itemPath>portas.h</itemPath>
+      <itemPath>main.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <logicalFolder name="f1" displayName="keyword_protocol" projectFiles="true">
+        <logicalFolder name="f2" displayName="recv" projectFiles="true">
+          <itemPath>kline_recv.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="f1" displayName="send" projectFiles="true">
+          <itemPath>kline_send.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="f3" displayName="uart" projectFiles="true">
+          <itemPath>uart.c</itemPath>
+          <itemPath>pulls.c</itemPath>
+        </logicalFolder>
+        <itemPath>kline.c</itemPath>
+        <itemPath>kline_utils.c</itemPath>
+        <itemPath>kline_time_functions.c</itemPath>
+        <itemPath>fillers.c</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f2" displayName="lcd16" projectFiles="true">
+        <logicalFolder name="f1" displayName="i2c" projectFiles="true">
+          <itemPath>i2c.c</itemPath>
+          <itemPath>i2c_utils.c</itemPath>
+        </logicalFolder>
+        <itemPath>simon_hd44780_lcd.c</itemPath>
+      </logicalFolder>
       <itemPath>configuration_bits.c</itemPath>
       <itemPath>interrupts.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>system.c</itemPath>
       <itemPath>user.c</itemPath>
-      <itemPath>i2c.c</itemPath>
-      <itemPath>lcd16.c</itemPath>
+      <itemPath>debug_leds.c</itemPath>
+      <itemPath>timers.c</itemPath>
+      <itemPath>portas.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -144,8 +185,8 @@
         <property key="link-in-c-library" value="true"/>
         <property key="link-in-c-library-gcc" value=""/>
         <property key="link-in-peripheral-library" value="false"/>
-        <property key="managed-stack" value="false"/>
-        <property key="opt-xc8-linker-file" value="false"/>
+        <property key="managed-stack" value="true"/>
+        <property key="opt-xc8-linker-file" value="true"/>
         <property key="opt-xc8-linker-link_startup" value="false"/>
         <property key="opt-xc8-linker-serial" value=""/>
         <property key="program-the-device-with-default-config-words" value="false"/>

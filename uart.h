@@ -9,6 +9,8 @@
 #define	UART_H
 
 void init_uart(void);
+void write_uart(uint8_t data);
+uint8_t read_uart(void);
 
 
 #endif	/* UART_H */

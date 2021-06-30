@@ -12,7 +12,10 @@
 #include "user.h"          /* init_app */
 #include "pulls.h"
 #include "debug_leds.h"
+#include "main.h"
+#include "uart.h"
 
+static void blink_green_led(void);
 
 
 void main(void)
@@ -20,17 +23,24 @@ void main(void)
     init_app();
     switch_prtd_led(5,1);
     lcd_print("Hello World");
-    switch_prtd_led(3,1);
+    
     
     
     while (1) {
-    pull_low_kline(70);
-    pull_up_terrain_kline(70);
-    PORTBbits.RB1 = 1;
-    __delay_ms(500);
-    PORTBbits.RB1 = 0;
-    __delay_ms(500);
+        blink_green_led();
+        write_uart(0x12);
+        pull_low_kline(50);
+    
     }
 
 }
 
+
+static void blink_green_led(void)
+{
+    PORTBbits.RB1 = 1;
+    __delay_ms(500);
+    PORTBbits.RB1 = 0;
+    __delay_ms(500);
+    return;
+}
