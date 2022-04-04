@@ -7,6 +7,7 @@
 
 #include "cristal.h"
 #include "kline_struct.h"
+#include "kline_time_functions.h"
 #include "pulls.h"
 #include "timers.h"
 
@@ -18,16 +19,17 @@
 
 
 
-void count_t_idle() 
+count_kline_idle(uint8_t time)
 {
     /* @TODO: temos de ir buscar o sinal da kline e contar o tidlle */
 }
 
 
-void make_t_wup(Times *tp)
+void make_wakeup(uint8_t twup, uint8_t tinil)
 {
-    pull_low_kline(tp->t_idle);
-    pull_up_terrain_kline(tp->t_wup_remain);
+    uint8_t remain = twup-tinil;
+    pull_low_kline(tinil);
+    pull_up_terrain_kline(remain);
 }
 
 

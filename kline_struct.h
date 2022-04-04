@@ -9,6 +9,10 @@
 #define	KLINE_STRUCT_H
 
 #include "ISO.h"
+#include "timers.h"
+
+
+
 
 typedef struct {
     uint8_t format_byte;
@@ -21,16 +25,20 @@ Header hs = {0};
 
 
 
+
 /* int j = g();  // Good -- declaration has initialization. */
 typedef struct {
-    uint8_t t_elapse;
+    
     uint8_t t_idle;
     uint8_t t_wup;           /* wake up */
-    uint8_t t_init_kline_low;
-    uint8_t t_wup_remain;
+    uint8_t t_iniL;
+    
+    void    (*delay)(uint16_t ms);
 } Times;
 
-Times ts = { .t_idle = ISO_T_IDLE, .t_init_kline_low = 50, .t_wup_remain = 25 };
+Times ts = {    .t_idle = ISO_T_IDLE, .t_wup = ISO_T_WAKEUP,        \
+                .t_iniL = ISO_T_INILIALIZE };
+
 
 
 
@@ -60,12 +68,22 @@ typedef struct {
     Header  *headerp;
     Times   *timesp;
     
-    uint8_t negative_response_id;
-    void (*send_service_id)(uint8_t);
-    char    data[255];
-    uint8_t parameter_type;
-    uint8_t checksum_byte;
+    uint8_t response_id;
+    uint8_t service_id;
+    void    (*send_service_id)(uint8_t);
+    char    (*send_data)(char *data); // send_data?    
+    uint8_t parameter_type; // send_paramemer?
+    uint8_t checksum_byte; // send cs?
+    uint8_t (*calc_checksum)(void);
 } Kline;
+
+Kline ks = { .headerp = hs, .timesp = ts, .negative_response_id = 0, /**/ /**/\
+            .parameter_type = 0, .checksum_byte = 0 /**/ };            
+
+
+
+
+
 
 #endif	/* KLINE_STRUCT_H */
 

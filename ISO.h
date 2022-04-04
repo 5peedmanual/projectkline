@@ -32,9 +32,9 @@
 #define ISO_T_P4_MAX_LIMIT  20    ///< inter byte time for tester request
 
 // P2 (min & max), P3 (min & max) and P4 (min) are defined by the ECU with accessTimingParameter()
-#define ISO_T_IDLE          (unsigned char)  1000             ///< min 300, max undefined
-#define ISO_T_INILIALIZE    (unsigned char)  25   /*     Initialization low time  */
-#define ISO_T_WAKEUP        (unsigned char)  50   /*     Wake up Pattern          */
+#define ISO_T_IDLE          (uint8_t)  1000             ///< min 300, max undefined
+#define ISO_T_INILIALIZE    (uint8_t)  25   /*     Initialization low time  */
+#define ISO_T_WAKEUP        (uint8_t)  50   /*     Wake up Pattern          */
 
 #endif	/* ISO_H */
 

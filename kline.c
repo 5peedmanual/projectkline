@@ -18,35 +18,46 @@ static void fast_initialisation(Kline *);
 
 
 
-void init_kline(void) 
-{
     /* Pull the K-line low for 70msec */
     /* Return the K-line to the high state for 120msec */
     /* Send ?Wakeup? message: FE 04 FF FF. No response is expected */
     /* Wait 200msec */
     /* Send ?Initialise? message: 72 05 00 F0 99 */
     /* The ECU should respond with: 02 04 00 FA */
+
+void init_kline(void) 
+{
+    Kline *ksp = ks;
+    
+ 
+    /* begin talk */
+    fast_initialisation(ksp);
+    
+    /* choose service we want from ecu */
+    
 }
 
 
 static void fast_initialisation(Kline *klinep) 
 {
     
-    //send_kline_wake_up();
+    send_kline_wake_up();
     /* 
      * The first message of a fast initialisation always uses a header
      *  with target and source address and without additional length byte
      */
-    //send_start_request(klinep);             
+        send_start_communication(klinep);
+    send_start_request(klinep);             
     
     /* 25...50 ms*, 0..1000ms** */
-    //wait_p2(klinep);
+    wait_p2(klinep);
     
     //read_start_response(klinep);
     
     /* 55...5000ms*, 0...5000 ms** */
     //wait_p3();
 }
+
 
 
 

@@ -10,7 +10,8 @@
 
 #include "kline_struct.h"
 
-//void send_start_request(Kline *klinep);
+void send_kline_wake_up(Kline *klinep);
+void send_start_request(Kline *klinep);
 
 
 #endif	/* KLINE_SEND_H */

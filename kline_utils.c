@@ -8,7 +8,7 @@
 
 
 
-uint8_t checksum_kline(const uint8_t data[], const uint8_t data_len)
+uint8_t calc_checksum(const uint8_t data[], const uint8_t data_len)
 {
     uint8_t cs = 0;
     for (uint8_t i = 0; i < data_len; i++)

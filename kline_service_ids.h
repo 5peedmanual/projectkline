@@ -8,8 +8,13 @@
 #ifndef KLINE_SERVICE_IDS_H
 #define	KLINE_SERVICE_IDS_H
 
-#define ID_START    uint8_t id_start;
-#define ID_STOP     uint8_t id_stop;
+
+#define POSITIVE_RESPONSE   (uint8_t) 0xC1;
+#define NEGATIVE_RESPONSE   (uint8_t) 0x7F;
+
+
+#define ID_START            (uint8_t) 0x81;
+#define ID_STOP             (uint8_t) 0x88;
 
 #endif	/* KLINE_SERVICE_IDS_H */
 
